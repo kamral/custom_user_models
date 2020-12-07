@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import  models
@@ -33,15 +33,7 @@ class UserManager(BaseUserManager):
         return user
 
 
-# db_index=True-используется для ускорения поиска по данным.
-# Если очень приблизительно - индексы сортируют ваши данные по тому полю,
-# для которого вы укажете db_index=True, а искать по сортированным данным
-# получается быстрее, нежели простым перебором всего подряд.
-# Указывайте этот параметр, чтобы создать индекс для поля,
-# по которому вы совершаете поисковые запросы.
-
-
-class User(AbstractUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(
         'Электронная почта',
@@ -66,26 +58,27 @@ class User(AbstractUser, PermissionsMixin):
         blank=True,
         # пустые значения будут сохранены как NULL
         null=True,
+        upload_to='user/avatar'
     )
-    first_name = models.CharField(
+    firstname = models.CharField(
         'Фамилия',
         max_length=100,
         null=True,
         blank=True
     )
-    last_name = models.CharField(
+    lastname = models.CharField(
         'Имя',
         max_length=100,
         null=True,
         blank=True
     )
-    middle_name = models.CharField(
+    middlename = models.CharField(
         'Отчество',
         max_length=100,
         null=True,
         blank=True
     )
-    date__birth=models.DateField(
+    date_of_birth=models.DateField(
         'Дата рождения',
         null=True,
         blank=True
@@ -107,6 +100,7 @@ class User(AbstractUser, PermissionsMixin):
         return self.email
 
     # требуется для админки
+    @property
     def is_staff(self):
         return self.is_admin
 
@@ -130,4 +124,11 @@ class User(AbstractUser, PermissionsMixin):
     # вместо имени пользователя, вы можете настроить его, используя USERNAME_FIELD.
 
     USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
+    # нужен для создания пользователя и суперпользователя
+    objects = UserManager()
+
+    class Meta:
+        verbose_name='Пользователь'
+        verbose_name_plural='Пользователи'

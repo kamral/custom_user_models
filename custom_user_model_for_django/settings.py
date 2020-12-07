@@ -82,7 +82,8 @@ DATABASES = {
         'NAME': 'custom_user_model',
         'USER':'users_model',
         'HOST':'127.0.0.1',
-        'PORT':'5432'
+        'PORT':'5432',
+        'PASSWORD':'password'
     }
 }
 
